@@ -11,6 +11,12 @@
 	@brief File di testing per la classe templata Queue
 */
 
+bool test_tutorial(){
+	std::cout << "Test tutorial" << std::endl;
+	Sudoku s;
+	std::cout << "END Test tutorial" << std::endl;
+	return true;
+}
 
 bool test_constructor(){
 	std::cout << "Test constructor" << std::endl;
@@ -27,7 +33,7 @@ bool test_constructor(){
 			assert( n.get(i,j) == -1 );
 		}
 	} 
-
+	
 	assert( !n.is_changed() );
 
 	//Check 'get'
@@ -66,9 +72,11 @@ bool test_constructor(){
 		flag = true;
 	}
 	assert ( flag );
-
+	
+	
 	//Check 'set'
 	assert( n.set(3, 1, 1) );
+	
 	assert( n.get(1,1) == 3 );
 	assert( n.get_possible_values(1, 1).size() == 1 );
 	assert( n.get_possible_values(3, 5).size() != 1 );
@@ -150,9 +158,10 @@ bool test_constructor(){
 	assert( n_hard.set(9,7,7) );
 	assert( n_hard.set(1,9,9) );
 
+	
 	// Sudoku(const Sudoku &s) 
 	Sudoku n_copy(n_hard);
-
+	
 	assert( n_hard.is_changed() );
 	assert( !n_copy.is_changed() );
 
@@ -173,7 +182,7 @@ bool test_constructor(){
 	assert( n_p_copy.get(6,2) == 7 );
 
 	assert( !n_p_copy.is_solved() );
-
+	
 	//Sudoku& operator=(const Sudoku &other)
 	Sudoku n1 = n_p_copy;
 
@@ -566,6 +575,7 @@ bool speed_test(){
 
 bool test(){
 
+	assert( test_tutorial() );
 	assert( test_constructor() );
 	assert( test_display() );
 	assert( test_simple() );

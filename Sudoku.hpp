@@ -75,9 +75,7 @@ private:
 
 		Structure that implements a Sudoku table cell.
 
-		@param flag [bool] If true we have found the number, 
-		so we have to look at 'value' and 'possible_values' is deleted.
-		If false we have to look at 'possible_values'
+		@param flag [bool] If true we have found the number.
 		@param value [int] Real value of the cell.
 		If -1 we have not found the number.
 		@param possible_values [std::list<int>*] Possible values in a cell.
@@ -96,9 +94,43 @@ private:
 			'possible_values' has all the possible values.
 		*/
 		Cell(): flag(false), value(-1) {
-			possible_values = new std::list<int> ();
+			possible_values = new std::list<int>();
 			for(int i=0; i < 9; i++){
 				possible_values->push_back(i+1);				
+			}
+		}
+
+		/**
+			@brief Constructor.
+
+			Constructor that instantiates an depp copy Cell.
+		*/
+		Cell(const Cell &other) {
+			this->flag = other.flag;
+			this->value = other.value;
+			//this->possible_values = new std::list<int>(other.possible_values);
+			delete this->possible_values;
+			this->possible_values = new std::list<int> ();
+			std::list<int>::iterator it;
+			for (it = other.possible_values->begin(); it != other.possible_values->end(); ++it){
+				this->possible_values->push_back( *it );
+			}
+		}
+
+		/**
+			@brief Constructor.
+
+			Constructor that instantiates an depp copy Cell.
+		*/
+		Cell(const Cell *other) {
+			this->flag = other->flag;
+			this->value = other->value;
+			//this->possible_values = new std::list<int>(other->possible_values);
+			delete this->possible_values;
+			this->possible_values = new std::list<int> ();
+			std::list<int>::iterator it;
+			for (it = other->possible_values->begin(); it != other->possible_values->end(); ++it){
+				this->possible_values->push_back( *it );
 			}
 		}
 
@@ -112,7 +144,16 @@ private:
 			@param n [int] Actual value of the Cell.
 		*/
 		explicit Cell(int n): flag(true), value(n) {
-			possible_values = new std::list<int> ();
+			possible_values = new std::list<int> (1, n);
+		}
+
+		/**
+			@brief Destroyer.
+
+			Removes the allocated memory from the Cell.
+		*/
+		~Cell(){
+			//delete this->possible_values;
 		}
 
 		/**
@@ -128,7 +169,13 @@ private:
 			this->value = other.value;
 
 			if( !other.flag ){
-				this->possible_values = other.possible_values;
+				//this->possible_values =  new std::list<int> (other.possible_values);
+				delete this->possible_values;
+				this->possible_values = new std::list<int> ();
+				std::list<int>::iterator it;
+				for (it = other.possible_values->begin(); it != other.possible_values->end(); ++it){
+					this->possible_values->push_back( *it );
+				}
 			}
 
 			return *this;
@@ -147,7 +194,14 @@ private:
 			this->value = other->value;
 
 			if( !other->flag ){
-				this->possible_values = other->possible_values;
+				//this->possible_values = new std::list<int> (other->possible_values);
+				delete this->possible_values;
+				this->possible_values = new std::list<int> ();
+				std::list<int>::iterator it;
+				for (it = other->possible_values->begin(); it != other->possible_values->end(); ++it){
+					this->possible_values->push_back( *it );
+				}
+
 			}
 
 			return *this;
@@ -354,7 +408,7 @@ private:
 			if( table[i][col].flag )
 				real_values.push_back( table[i][col].value );
 		}
-		//Scan to delete possible values if in real values
+		//Scan to remove possible values if in real values
 		for(int i=0; i < 9; i++){
 			if( !table[i][col].flag ){
 				for (it = real_values.begin(); it != real_values.end(); ++it){
@@ -403,7 +457,7 @@ private:
 			if( table[row][i].flag )
 				real_values.push_back( table[row][i].value );
 		}
-		//Scan to delete possible values if in real values
+		//Scan to remove possible values if in real values
 		for(int i=0; i < 9; i++){
 			if( !table[row][i].flag ){
 				for (it = real_values.begin(); it != real_values.end(); ++it){
@@ -729,9 +783,24 @@ public:
 		Default constructor that instantiates an empty Sudoku table.
 	*/
 	Sudoku(): changed(false) {
+		/*
 		for(int i=0; i<9; i++){
 			for(int j=0; j<9; j++){
 				table[i][j] = new Cell();
+			}
+		}
+		*/
+	}
+	
+	/**
+		@brief Destroyer.
+
+		Removes the allocated memory from the Sudoku table.
+	*/
+	~Sudoku(){
+		for(int i=0; i<9; i++){
+			for(int j=0; j<9; j++){
+				delete table[i][j].possible_values;
 			}
 		}
 	}
@@ -812,19 +881,6 @@ public:
     }
 
 	/**
-		@brief Destroyer.
-
-		Removes the allocated memory from the Sudoku table.
-	*/
-	~Sudoku(){
-		for(int i=0; i<9; i++){
-			for(int j=0; j<9; j++){
-				delete table[i][j].possible_values;
-			}
-		}
-	}
-
-	/**
 		@brief Set 'value' in Cell (x,y) if possible.
 
 		If 'value', 'x' and 'y' are in [1,9], set 'value' in Cell (x,y).
@@ -843,6 +899,7 @@ public:
 			this->changed = true;
 
             //The possible values now are just 'value'
+			delete table[x-1][y-1].possible_values;
             table[x-1][y-1].possible_values = new std::list <int> (1, value);
 
 			return true;
