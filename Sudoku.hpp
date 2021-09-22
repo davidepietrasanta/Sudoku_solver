@@ -108,7 +108,6 @@ private:
 		Cell(const Cell &other) {
 			this->flag = other.flag;
 			this->value = other.value;
-			//this->possible_values = new std::list<int>(other.possible_values);
 			delete this->possible_values;
 			this->possible_values = new std::list<int> ();
 			std::list<int>::iterator it;
@@ -125,7 +124,6 @@ private:
 		Cell(const Cell *other) {
 			this->flag = other->flag;
 			this->value = other->value;
-			//this->possible_values = new std::list<int>(other->possible_values);
 			delete this->possible_values;
 			this->possible_values = new std::list<int> ();
 			std::list<int>::iterator it;
@@ -152,9 +150,7 @@ private:
 
 			Removes the allocated memory from the Cell.
 		*/
-		~Cell(){
-			//delete this->possible_values;
-		}
+		~Cell(){}
 
 		/**
 			@brief Assignment operator
@@ -169,7 +165,6 @@ private:
 			this->value = other.value;
 
 			if( !other.flag ){
-				//this->possible_values =  new std::list<int> (other.possible_values);
 				delete this->possible_values;
 				this->possible_values = new std::list<int> ();
 				std::list<int>::iterator it;
@@ -194,7 +189,6 @@ private:
 			this->value = other->value;
 
 			if( !other->flag ){
-				//this->possible_values = new std::list<int> (other->possible_values);
 				delete this->possible_values;
 				this->possible_values = new std::list<int> ();
 				std::list<int>::iterator it;
@@ -783,13 +777,6 @@ public:
 		Default constructor that instantiates an empty Sudoku table.
 	*/
 	Sudoku(): changed(false) {
-		/*
-		for(int i=0; i<9; i++){
-			for(int j=0; j<9; j++){
-				table[i][j] = new Cell();
-			}
-		}
-		*/
 	}
 	
 	/**
